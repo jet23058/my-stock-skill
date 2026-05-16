@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TTT 低頻趨勢功能說明書</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #dbe3ef;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --amber: #b45309;
+      --red: #b91c1c;
+      --slate: #172033;
+      --soft-blue: #eff6ff;
+      --soft-green: #ecfdf5;
+      --soft-amber: #fffbeb;
+      --soft-red: #fef2f2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft JhengHei UI", "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+      line-height: 1.7;
+    }
+
+    header {
+      background: #0f172a;
+      color: #ffffff;
+      padding: 36px 48px;
+      border-bottom: 6px solid #2563eb;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+
+    header p {
+      margin: 0;
+      color: #dbeafe;
+      font-size: 15px;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 56px;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+      font-size: 23px;
+      color: #0f172a;
+    }
+
+    h3 {
+      margin: 22px 0 8px;
+      font-size: 18px;
+      color: #1e3a8a;
+    }
+
+    p { margin: 8px 0; }
+    ul, ol { margin: 8px 0 8px 24px; padding: 0; }
+    li { margin: 5px 0; }
+
+    code {
+      background: #eef2ff;
+      color: #1e3a8a;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.95em;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #1e293b;
+      white-space: nowrap;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .toc a {
+      display: block;
+      color: var(--blue);
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 12px;
+      text-decoration: none;
+    }
+
+    .toc a:hover { background: var(--soft-blue); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 12px 0;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+      padding: 14px;
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 4px;
+      color: #0f172a;
+    }
+
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 2px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .ok { background: var(--soft-green); border-left: 5px solid var(--green); }
+    .warn { background: var(--soft-amber); border-left: 5px solid var(--amber); }
+    .danger { background: var(--soft-red); border-left: 5px solid var(--red); }
+    .info { background: var(--soft-blue); border-left: 5px solid var(--blue); }
+
+    .note {
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 12px 0;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      margin-top: 28px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TTT 低頻趨勢功能說明書</h1>
+    <p>功能文件，不是 README。適用於 Windows App 內的「TTT 低頻趨勢」模組。</p>
+  </header>
+
+  <main>
+    <section id="overview">
+      <h2>1. 文件定位</h2>
+      <p>本文件說明目前 App 內 TTT 模組的所有使用功能、輸出欄位、操作方式與策略判斷邏輯。它不是安裝文件，也不是專案 README；它比較接近使用手冊、產品規格與復盤指南的混合版。</p>
+
+      <div class="grid">
+        <div class="card">
+          <strong>策略名稱</strong>
+          TTT 低頻趨勢，又稱 Taiwan Trend Tracking Strategy。
+        </div>
+        <div class="card">
+          <strong>目前版本</strong>
+          Strategy Version: <code>TTT v2.0</code>
+        </div>
+        <div class="card">
+          <strong>回測引擎</strong>
+          Engine: <code>Position-Based</code>
+        </div>
+        <div class="card">
+          <strong>出場模式</strong>
+          Exit Mode: <code>Close Confirm</code>
+        </div>
+        <div class="card">
+          <strong>部位精神</strong>
+          Position: <code>Core/Mobile</code>
+        </div>
+      </div>
+
+      <div class="note info">
+        <strong>核心原則：</strong>TTT 不是單純用 20MA 或量比買賣，而是以市場結構優先，搭配均線、突破、收盤位置、漲跌停語言、流動性與成交金額來判斷右側趨勢。
+      </div>
+    </section>
+
+    <section id="toc">
+      <h2>2. 目錄</h2>
+      <div class="toc">
+        <a href="#layout">介面總覽</a>
+        <a href="#query">股號查詢</a>
+        <a href="#scanner">掃描適合進場股票</a>
+        <a href="#image">圖片分析股票</a>
+        <a href="#decision">最新決策邏輯</a>
+        <a href="#backtest">回測與交易紀錄</a>
+        <a href="#chart">圖表功能</a>
+        <a href="#history">歷史與快取</a>
+        <a href="#fields">欄位說明</a>
+        <a href="#strategy">策略細項</a>
+        <a href="#consistency">一致性設計</a>
+        <a href="#limits">限制與注意事項</a>
+      </div>
+    </section>
+
+    <section id="layout">
+      <h2>3. TTT 介面總覽</h2>
+      <p>TTT 模組目前位於主分頁 <strong>TTT 低頻趨勢</strong>。底下再分成三個主要功能分頁：</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>分頁</th>
+            <th>用途</th>
+            <th>適合情境</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>股號查詢</td>
+            <td>輸入單一股票，執行 TTT 回測，顯示是否適合進場、加碼時機、策略結論、波段圖表與交易紀錄。</td>
+            <td>你已經有特定標的，例如 2330、6217、NVDA，想知道目前用 TTT 看起來怎樣。</td>
+          </tr>
+          <tr>
+            <td>掃描適合進場股票</td>
+            <td>掃描台股前 N 大股票，找出符合 TTT 進場結構的候選名單。</td>
+            <td>你不知道今天該看哪些股票，想讓系統從市場中先篩一輪。</td>
+          </tr>
+          <tr>
+            <td>依據上傳圖片分析股票</td>
+            <td>把截圖或貼上的圖片交給 LLM 辨識股號，再逐檔用同一套 TTT 邏輯回測與判斷。</td>
+            <td>你從券商、社群、看盤軟體截了一串股票清單，想快速得到每檔結論。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note warn">
+        <strong>重要：</strong>三個分頁的策略結論應該使用同一套 TTT 最新決策邏輯。若某檔股票在單一查詢、掃描、圖片分析結果不一致，優先檢查共用決策函式與資料日期。
+      </div>
+    </section>
+
+    <section id="query">
+      <h2>4. 股號查詢功能</h2>
+      <p>股號查詢是 TTT 的單股分析入口。它包含市場切換、股號輸入、歷史快捷、年限設定、量比門檻，以及回測結果顯示。</p>
+
+      <h3>4.1 台股 / 美股分開查詢</h3>
+      <p>股號輸入區已分成兩個內部分頁：</p>
+      <table>
+        <thead>
+          <tr>
+            <th>內部分頁</th>
+            <th>輸入方式</th>
+            <th>歷史紀錄</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>台股查詢</td>
+            <td>可輸入股票代號或股名，支援自動提示，例如 <code>2330｜台積電</code>。</td>
+            <td>只顯示台股歷史。</td>
+          </tr>
+          <tr>
+            <td>美股查詢</td>
+            <td>可輸入美股代號或公司名提示，支援常用清單與查詢歷史，例如 <code>NVDA｜NVIDIA Corporation</code>。</td>
+            <td>只顯示美股歷史。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>4.2 自動提示</h3>
+      <ul>
+        <li>台股自動提示來自台股名稱快取、官方名稱映射、台股清單與 fallback 名稱。</li>
+        <li>美股自動提示來自內建常用美股清單，以及你查詢過的美股歷史。</li>
+        <li>台股提供「更新」按鈕，可以重新整理台股提示清單。</li>
+        <li>輸入股號後按 <code>Enter</code> 可以直接開始回測。</li>
+      </ul>
+
+      <h3>4.3 回測設定</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>設定</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>回測年數</td>
+            <td>決定單股回測抓取的歷史資料長度。適合用 1 年看近期波段，用 3 到 5 年觀察策略長期穩定性。</td>
+          </tr>
+          <tr>
+            <td>20日建議最低量比</td>
+            <td>用於最新決策與掃描篩選。量比 = 今日量 / 20 日均量。預設常用門檻為 1.2。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>4.4 結果區塊</h3>
+      <p>查詢完成後，右側會顯示：</p>
+      <ul>
+        <li>標的與股名。</li>
+        <li>策略報酬、買進持有報酬、最大回撤、交易數與勝率。</li>
+        <li>「是否適合進場」highlight 區塊。</li>
+        <li>「加碼時機」highlight 區塊。</li>
+        <li>TTT 策略結論。</li>
+        <li>波段圖表與交易紀錄。</li>
+      </ul>
+
+      <div class="note info">
+        <strong>問號提示：</strong>「是否適合進場」與「加碼時機」旁邊的 <code>?</code> 用來顯示完整理由，避免主要畫面塞太多文字。
+      </div>
+    </section>
+
+    <section id="scanner">
+      <h2>5. 掃描適合進場股票</h2>
+      <p>掃描分頁用來從台股前 N 大股票中找出目前符合 TTT 進場結構的候選名單。</p>
+
+      <h3>5.1 掃描流程</h3>
+      <ol>
+        <li>讀取或抓取台股前 N 大股票清單。</li>
+        <li>逐檔抓取價格資料。</li>
+        <li>盤中掃描時採用穩定收盤策略，避免開盤或盤中價格讓結果漂移。</li>
+        <li>執行單股 TTT 回測。</li>
+        <li>使用與股號查詢相同的最新決策邏輯產生進場、加碼、價量與理由。</li>
+        <li>將符合條件的結果顯示在掃描表格。</li>
+      </ol>
+
+      <h3>5.2 掃描設定</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>設定</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>掃描前 N 大</td>
+            <td>可設定掃描台股前 100 到 1000 大。數字越大越完整，但耗時越長。</td>
+          </tr>
+          <tr>
+            <td>加碼狀態</td>
+            <td>可篩選全部、可加碼觀察、等待加碼、不適合加碼。</td>
+          </tr>
+          <tr>
+            <td>20日最低量比</td>
+            <td>表格篩選門檻。調高會保留較有量能的股票；調低可能需要重新掃描才會補回原本沒列出的股票。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>5.3 掃描結果欄位</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>欄位</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>股號</td><td>股票代號，例如 <code>2330.TW</code> 或 <code>6147.TWO</code>。</td></tr>
+          <tr><td>股名</td><td>台股使用繁體中文名稱；若官方名稱本身是英文，例如 JPP-KY，則保留英文。</td></tr>
+          <tr><td>進場狀態</td><td>是否適合進場，例如「適合進場」。</td></tr>
+          <tr><td>加碼狀態</td><td>目前持有者是否可加碼觀察、等待加碼或不適合加碼。</td></tr>
+          <tr><td>收盤日</td><td>本次判斷使用的價格日期。台股盤中會傾向使用前一個穩定交易日。</td></tr>
+          <tr><td>收盤</td><td>用於判斷的收盤價。</td></tr>
+          <tr><td>5MA / 20MA / 60MA</td><td>主要均線結構。</td></tr>
+          <tr><td>20日量比</td><td>今日量除以 20 日均量。</td></tr>
+          <tr><td>5日量比</td><td>今日量除以 5 日均量，用於觀察短期爆發。</td></tr>
+          <tr><td>價量</td><td>例如價漲且收盤強、爆量弱收、急跌縮量、漲停鎖住等。</td></tr>
+          <tr><td>成交金額</td><td>收盤價乘以成交量，用於流動性檢查。</td></tr>
+          <tr><td>20MA 乖離</td><td>現價距離 20MA 的百分比。</td></tr>
+          <tr><td>原因</td><td>TTT 判斷摘要。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>5.4 排序與操作</h3>
+      <ul>
+        <li>可點擊欄位標題排序：5MA、20MA、60MA、20日量比、5日量比、價量、成交金額、20MA 乖離。</li>
+        <li>排序循環為：升冪 → 降冪 → 回到原本策略排序。</li>
+        <li>右鍵股票列可帶到 TTT 回測，也可立即回測。</li>
+        <li>雙擊股票列會開啟 Yahoo 股票頁，例如 <code>2103.TW</code> 會開到 <code>https://tw.stock.yahoo.com/quote/2103.TW</code>。</li>
+      </ul>
+
+      <h3>5.5 掃描快取</h3>
+      <p>掃描結果會依日期、策略版本、掃描數量、回測年數、量比門檻建立快取。當日同樣條件可以優先讀取快取，減少等待時間。</p>
+    </section>
+
+    <section id="image">
+      <h2>6. 依據上傳圖片分析股票</h2>
+      <p>圖片分析分頁用於處理你貼上或上傳的股票清單截圖。LLM 只負責從圖片中辨識股票代號；真正的策略判斷仍由 TTT 程式邏輯產生。</p>
+
+      <h3>6.1 支援的使用方式</h3>
+      <ul>
+        <li>上傳圖片分析。</li>
+        <li>直接從剪貼簿貼上圖片分析。</li>
+        <li>支援多張圖片一組分析。</li>
+        <li>分析結果直接顯示在頁面上，不只用 popup。</li>
+      </ul>
+
+      <h3>6.2 LLM 設定</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>設定</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>LLM 提供者</td>
+            <td>例如 Google Gemini 或其他相容提供者。</td>
+          </tr>
+          <tr>
+            <td>API Key</td>
+            <td>用於呼叫模型辨識圖片中的股票代號。</td>
+          </tr>
+          <tr>
+            <td>Model</td>
+            <td>可選擇模型，例如 <code>gemma-4-31b-it</code>。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>6.3 圖片分析結果</h3>
+      <p>每一檔被辨識出的股票，都會走與股號查詢、掃描相同的 TTT 回測與最新決策。結果欄位包含：</p>
+      <ul>
+        <li>股號、股名。</li>
+        <li>進場結論。</li>
+        <li>加碼狀態。</li>
+        <li>是否仍持有。</li>
+        <li>策略報酬、買進持有、最大回撤、交易數。</li>
+        <li>收盤價、收盤日與原因。</li>
+      </ul>
+
+      <h3>6.4 圖片組紀錄</h3>
+      <p>每次上傳或貼上的圖片會形成一組圖片組紀錄。你可以勾選歷史圖片組重新分析，適合每天固定追蹤同一批股票截圖。</p>
+
+      <h3>6.5 圖片股號紀錄</h3>
+      <p>系統會記錄從圖片分析中出現過的股號，並在自己的分頁中顯示。雙擊紀錄可以帶回 TTT 查詢並回測。</p>
+
+      <div class="note warn">
+        <strong>錯誤處理：</strong>如果 LLM 回傳 HTTP 500 或辨識失敗，應顯示清楚錯誤，不應讓 UI 永遠卡在分析中。若部分股票已成功解析，仍應保留可用結果。
+      </div>
+    </section>
+
+    <section id="decision">
+      <h2>7. 最新決策邏輯</h2>
+      <p>TTT 的最新決策用來回答兩件事：</p>
+      <ol>
+        <li>這檔股票現在是否適合進場？</li>
+        <li>如果目前已持有，現在是否適合加碼？</li>
+      </ol>
+
+      <h3>7.1 是否適合進場</h3>
+      <p>目前主要條件：</p>
+      <ul>
+        <li><code>MA5 > MA10 > MA20</code>，短均線形成右側多頭排列。</li>
+        <li>收盤價突破近 20 日結構高點。</li>
+        <li>收盤位置不能太弱，避免假突破或分歧。</li>
+        <li>上影線不能太長，避免追在被倒貨的 K 線。</li>
+        <li>不能是漲停打開後未回封的弱結構。</li>
+        <li>成交金額需達最低流動性門檻，目前為 <code>1 億</code>。</li>
+      </ul>
+
+      <h3>7.2 加碼時機</h3>
+      <p>加碼不是給空手者追價，而是給策略已持有者判斷是否增加部位。主要條件：</p>
+      <ul>
+        <li>目前必須是策略持有狀態。</li>
+        <li>出現漲停鎖住、開板回封，或突破 10 日高點且收盤強。</li>
+        <li>短均線結構完整。</li>
+        <li>沒有爆量弱收或疑似派發。</li>
+        <li>成交金額足夠。</li>
+      </ul>
+
+      <h3>7.3 價量結構分類</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>價量結構</th>
+            <th>意義</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>漲停鎖住</td><td>籌碼鎖定強，量小不一定是壞事。</td></tr>
+          <tr><td>開板回封</td><td>開板後仍有承接並回封，屬強勢結構。</td></tr>
+          <tr><td>價漲且收盤強</td><td>買盤願意把價格推高，收盤位置健康。</td></tr>
+          <tr><td>急跌縮量</td><td>可能是洗盤，需搭配是否站上 20MA 與結構低點。</td></tr>
+          <tr><td>爆量弱收警示</td><td>可能是分歧或派發。</td></tr>
+          <tr><td>流動性 / 派發警示</td><td>跌停或爆量跌破重要低點，風險較高。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="backtest">
+      <h2>8. 回測與交易紀錄</h2>
+      <p>TTT 回測使用 position-based engine。這代表同一檔股票同一時間只會有一筆主倉，不會因為重複訊號而每天開一筆新交易。</p>
+
+      <h3>8.1 回測輸出</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>輸出</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>策略報酬</td><td>依策略交易計算的總報酬。</td></tr>
+          <tr><td>買進持有</td><td>同期間單純買進持有的報酬。</td></tr>
+          <tr><td>最大回撤</td><td>依 equity curve 計算的策略最大回撤。</td></tr>
+          <tr><td>交易 / 勝率</td><td>交易筆數與勝率。</td></tr>
+          <tr><td>策略結論</td><td>含策略版本、期間、起始價、結束價、最新市場結構、是否適合進場與加碼時機。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>8.2 交易紀錄欄位</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>欄位</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>進場日</td><td>策略建立部位的日期。</td></tr>
+          <tr><td>出場日</td><td>策略出場或回測結束日期。</td></tr>
+          <tr><td>進場價</td><td>回測中的進場價格。</td></tr>
+          <tr><td>出場價</td><td>回測中的出場價格。</td></tr>
+          <tr><td>報酬</td><td>該筆交易報酬。</td></tr>
+          <tr><td>進場原因</td><td>例如初始突破、趨勢延續、回測 MA20 後守穩等。</td></tr>
+          <tr><td>出場原因</td><td>例如趨勢結構破壞、流動性崩潰、回測結束仍持有等。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>8.3 持有者建議</h3>
+      <p>TTT v2 偏向保留核心部位，不會因為單日跌破 MA20 就直接全砍。它更接近：</p>
+      <ul>
+        <li>跌破 MA20 先減碼或觀察。</li>
+        <li>3 日無法站回再降低部位。</li>
+        <li>真正出貨或流動性崩潰才出清。</li>
+      </ul>
+
+      <div class="note info">
+        <strong>新買與已持有是兩件事：</strong>新買要保守，避免追高；已持有則要盡量讓獲利奔跑，但遇到結構破壞要處理。
+      </div>
+    </section>
+
+    <section id="chart">
+      <h2>9. 圖表功能</h2>
+      <p>TTT 股號查詢內建波段圖表，用來視覺化策略與價格位置。</p>
+
+      <h3>9.1 顯示內容</h3>
+      <ul>
+        <li>收盤價線。</li>
+        <li>20MA 線。</li>
+        <li>買點標記。</li>
+        <li>賣點標記。</li>
+      </ul>
+
+      <h3>9.2 滑鼠提示</h3>
+      <p>滑鼠移到圖表上時，會顯示該日期的收盤價、20MA 與相關訊號資訊，類似股票軟體的游標讀值。</p>
+
+      <h3>9.3 框選放大</h3>
+      <ul>
+        <li>按住滑鼠左鍵拖曳可框選圖表區間並放大。</li>
+        <li>雙擊圖表可重置縮放。</li>
+      </ul>
+    </section>
+
+    <section id="history">
+      <h2>10. 歷史、快取與資料穩定性</h2>
+
+      <h3>10.1 股號查詢歷史</h3>
+      <p>TTT 股號查詢歷史分成台股與美股兩份顯示，不會混在同一區。</p>
+      <ul>
+        <li>台股歷史會顯示股號與繁體中文股名。</li>
+        <li>美股歷史會顯示美股代號。</li>
+        <li>點擊歷史按鈕會帶入對應市場分頁。</li>
+      </ul>
+
+      <h3>10.2 圖片分析歷史</h3>
+      <ul>
+        <li>圖片組紀錄：儲存每次上傳或貼上的圖片組。</li>
+        <li>圖片股號紀錄：儲存圖片分析中辨識到的所有股號。</li>
+      </ul>
+
+      <h3>10.3 台股名稱快取</h3>
+      <p>台股名稱透過統一名稱解析器取得，優先順序為：</p>
+      <ol>
+        <li>即時記憶體快取。</li>
+        <li>本地 JSON 快取。</li>
+        <li>TWSE / TPEx 官方資料。</li>
+        <li>fallback table。</li>
+        <li>最後才顯示股票代號。</li>
+      </ol>
+
+      <h3>10.4 掃描結果快取</h3>
+      <p>TTT 掃描結果會依條件快取，包含日期、策略版本、掃描 N、回測年數與量比門檻。</p>
+
+      <h3>10.5 穩定收盤政策</h3>
+      <p>台股掃描在盤中會優先使用前一個穩定交易日的收盤資料，避免今日開盤或盤中價格讓掃描結果一直跳動。</p>
+    </section>
+
+    <section id="fields">
+      <h2>11. 常見欄位與名詞</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>名詞</th>
+            <th>說明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>20日量比</td><td>今日成交量 / 20 日平均成交量。用來看今天是否比近期長週期更有量。</td></tr>
+          <tr><td>5日量比</td><td>今日成交量 / 5 日平均成交量。用來看短期爆發與短線熱度。</td></tr>
+          <tr><td>20MA 乖離</td><td>現價相對 20MA 的距離。太高代表追價風險較高，但強趨勢股不能只用乖離判斷。</td></tr>
+          <tr><td>成交金額</td><td>收盤價乘以成交量，用來判斷流動性是否足夠。</td></tr>
+          <tr><td>弱收</td><td>收盤接近當日低點，通常代表上方賣壓或追價失敗。</td></tr>
+          <tr><td>強收</td><td>收盤靠近當日高點，代表買盤願意推價。</td></tr>
+          <tr><td>漲停鎖住</td><td>接近漲停且收在高位，台股強勢股中可能代表籌碼鎖定。</td></tr>
+          <tr><td>開板回封</td><td>漲停打開後又收回高位，代表承接力強。</td></tr>
+          <tr><td>爆量弱收</td><td>量明顯放大但收盤弱，可能是分歧、派發或假突破。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="strategy">
+      <h2>12. 策略細項摘要</h2>
+
+      <h3>12.1 進場架構</h3>
+      <p>TTT v2 的進場不只看均線，也看市場結構。主要候選訊號包含：</p>
+      <table>
+        <thead>
+          <tr>
+            <th>訊號</th>
+            <th>用途</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>BREAKOUT</td><td>突破 20 日結構高點且量能放大。</td></tr>
+          <tr><td>EARLY_ACCELERATION</td><td>剛起漲、剛加速的早期加速段。</td></tr>
+          <tr><td>ACCELERATION</td><td>主升段加速，沿短均線快速推升。</td></tr>
+          <tr><td>TREND_CONTINUATION</td><td>錯過初始突破後，趨勢仍健康時的延續進場。</td></tr>
+          <tr><td>REENTRY</td><td>停損後重新突破，提供再進場機制。</td></tr>
+          <tr><td>PULLBACK</td><td>正常上升趨勢中的回測守穩。</td></tr>
+          <tr><td>MOMENTUM</td><td>補漏用的小部位動能進場。</td></tr>
+        </tbody>
+      </table>
+
+      <h3>12.2 進場優先順序</h3>
+      <p>目前設計精神為：先抓強突破與加速，再考慮趨勢延續、再進場、回測與動能補漏。</p>
+      <p><code>BREAKOUT → EARLY_ACCELERATION → ACCELERATION → TREND_CONTINUATION → REENTRY → PULLBACK → MOMENTUM</code></p>
+
+      <h3>12.3 防追高與防震盪</h3>
+      <ul>
+        <li>Chop Filter：震盪區不輕易進場，除非是強勢突破。</li>
+        <li>Cooldown：出場後有冷卻期，避免剛賣完又被洗進去。</li>
+        <li>Big Win Protection：上一筆大賺後，只允許更嚴格的強突破，避免高檔震盪吐回獲利。</li>
+        <li>Momentum Guard：動能追價需要量能、不可太快、不可離 MA20 太遠。</li>
+        <li>Pullback Guard：Pullback 只能在明確上升趨勢中做，避免買到弱反彈。</li>
+      </ul>
+
+      <h3>12.4 出場與減碼</h3>
+      <p>TTT v2 不把單日跌破 MA20 當成全出場理由。它使用核心/機動部位概念：</p>
+      <ul>
+        <li>跌破 MA20：先減碼或觀察。</li>
+        <li>無法在數日內收復：再降低部位。</li>
+        <li>爆量破壞、流動性崩潰、跌停鎖死、長期結構破壞：才出清。</li>
+      </ul>
+
+      <h3>12.5 高獲利保護</h3>
+      <p>當獲利很大時，TTT 會更重視不要吐回太多：</p>
+      <ul>
+        <li>大幅獲利後若出現高風險結構，可以減碼。</li>
+        <li>獲利超過 100% 後，會更重視 MA10 與 10 日低點類型的防守線。</li>
+      </ul>
+    </section>
+
+    <section id="consistency">
+      <h2>13. 一致性設計</h2>
+      <p>TTT 目前最重要的產品規則是：單股查詢、掃描結果、圖片分析結果，都應該使用同一套最新決策邏輯。</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>功能</th>
+            <th>資料來源</th>
+            <th>策略判斷</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>股號查詢</td>
+            <td>使用者輸入的單一股號。</td>
+            <td>回測後用最新一根 K 線跑 TTT 最新決策。</td>
+          </tr>
+          <tr>
+            <td>掃描</td>
+            <td>台股前 N 大股票。</td>
+            <td>逐檔回測與最新決策，並套用穩定收盤政策。</td>
+          </tr>
+          <tr>
+            <td>圖片分析</td>
+            <td>LLM 從圖片辨識出的股號。</td>
+            <td>逐檔回測與最新決策，不由 LLM 自行判斷買賣。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note danger">
+        <strong>排錯方向：</strong>如果同一檔股票在三個地方結論不同，先確認資料日期是否相同，再確認量比門檻、穩定收盤政策與共用決策函式是否一致。
+      </div>
+    </section>
+
+    <section id="limits">
+      <h2>14. 限制與注意事項</h2>
+      <ul>
+        <li>TTT 是策略輔助工具，不是投資建議或保證獲利系統。</li>
+        <li>掃描 1000 檔可能耗時，尤其網路或資料源較慢時。</li>
+        <li>圖片分析依賴 LLM，若 API 失敗、模型不支援圖片或圖片太模糊，辨識結果可能失敗。</li>
+        <li>美股名稱目前以常用 watchlist 與查詢歷史為主，不是完整美股全市場清單。</li>
+        <li>台股名稱若官方快取尚未更新，新上市櫃股票可能暫時顯示代號。</li>
+        <li>量比需要搭配價格方向與收盤位置：量比高但下跌弱收不一定是好事。</li>
+        <li>盤中掃描會刻意避免使用不穩定盤中價，因此可能與即時看盤軟體略有差異。</li>
+      </ul>
+    </section>
+
+    <section id="suggested-workflow">
+      <h2>15. 建議使用流程</h2>
+      <ol>
+        <li>每天收盤後先到「掃描適合進場股票」掃描台股前 N 大。</li>
+        <li>用加碼狀態與 20 日量比篩選較乾淨的候選股。</li>
+        <li>針對有興趣的股票右鍵帶到 TTT 股號查詢並回測。</li>
+        <li>查看是否適合進場與加碼時機的 highlight 區塊。</li>
+        <li>用圖表確認買賣點、20MA 與當前位置。</li>
+        <li>若是從看盤軟體或社群取得清單，直接用圖片分析批次處理。</li>
+        <li>保留圖片組紀錄，隔天可勾選同一組重新分析。</li>
+      </ol>
+    </section>
+
+    <p class="footer">文件名稱建議：<code>ttt_feature_manual.html</code>。最後更新：2026-05-16。</p>
+  </main>
+</body>
+</html>
