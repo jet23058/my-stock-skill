@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TTT v2.0 台股右側趨勢系統策略細項</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --ink: #102033;
+      --muted: #5f6f86;
+      --line: #d9e2ef;
+      --blue: #1d4ed8;
+      --green: #15803d;
+      --red: #b91c1c;
+      --orange: #c2410c;
+      --slate: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Microsoft JhengHei UI", "Microsoft JhengHei", "Noto Sans TC", Arial, sans-serif;
+      line-height: 1.65;
+    }
+    header {
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: #fff;
+      padding: 40px 56px;
+    }
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 34px;
+      letter-spacing: 0;
+    }
+    header p {
+      margin: 0;
+      color: #dbeafe;
+      font-size: 16px;
+    }
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 18px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+    }
+    h2 {
+      margin: 0 0 16px;
+      color: #0f172a;
+      font-size: 22px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+    }
+    h3 {
+      margin: 22px 0 10px;
+      font-size: 17px;
+      color: #1e3a8a;
+    }
+    p { margin: 8px 0; }
+    ul, ol { margin: 8px 0 8px 22px; padding: 0; }
+    li { margin: 4px 0; }
+    code {
+      background: #eef2ff;
+      color: #1e3a8a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    pre {
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      background: #f8fafc;
+    }
+    .card strong {
+      display: block;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin: 2px 4px 2px 0;
+      background: #e0f2fe;
+      color: #075985;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .good { color: var(--green); font-weight: 700; }
+    .warn { color: var(--orange); font-weight: 700; }
+    .bad { color: var(--red); font-weight: 700; }
+    .muted { color: var(--muted); }
+    .note {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 8px;
+      padding: 14px;
+      color: #7c2d12;
+    }
+    @media (max-width: 820px) {
+      header { padding: 28px 24px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TTT v2.0 台股右側趨勢系統策略細項</h1>
+    <p>Strategy Version: TTT v2.0 | Engine: Position-Based | Exit Mode: Close Confirm | Position: Core/Mobile</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. 策略定位</h2>
+      <p>TTT v2.0 是目前 App 內的「台股右側趨勢系統」。它不再只是單純用 <code>20MA + 量比</code> 判斷，而是以「市場結構優先」為核心，目標是：</p>
+      <ul>
+        <li>用有限虧損參與右側趨勢。</li>
+        <li>盡量留在強趨勢與主升段裡。</li>
+        <li>跌破 MA20 不立刻全砍，先用分層減碼避免被洗掉。</li>
+        <li>真正出貨、流動性崩潰、結構破壞時才出清。</li>
+        <li>用 Position-Based 回測，同一時間同一檔只會有一個主倉。</li>
+      </ul>
+      <div class="grid">
+        <div class="card"><strong>策略版本</strong>TTT v2.0</div>
+        <div class="card"><strong>資料需求</strong>至少約 75 個交易日</div>
+        <div class="card"><strong>預設資金</strong>100,000</div>
+        <div class="card"><strong>單檔最大資金</strong>預設 20%</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. 核心指標與計算</h2>
+      <table>
+        <thead>
+          <tr><th>項目</th><th>計算方式</th><th>用途</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>MA5</td><td>5 日簡單移動平均</td><td>短線強度與加速狀態</td></tr>
+          <tr><td>MA10</td><td>10 日簡單移動平均</td><td>續強確認、高獲利保護</td></tr>
+          <tr><td>MA20</td><td>20 日簡單移動平均</td><td>主要波段防守與趨勢分界</td></tr>
+          <tr><td>MA60</td><td>60 日簡單移動平均</td><td>UI 決策提示用於中期趨勢參考</td></tr>
+          <tr><td>20 日均量</td><td>20 日成交量簡單平均</td><td>量比、爆量、洗盤與分歧判斷</td></tr>
+          <tr><td>收盤位置</td><td><code>(close - low) / (high - low)</code></td><td>判斷強收、弱收、漲停鎖住、跌停流動性崩潰</td></tr>
+          <tr><td>20 日結構高點</td><td>前 20 日 high 最大值，不含今日</td><td>初始突破進場</td></tr>
+          <tr><td>10 日結構高點</td><td>前 10 日 high 最大值，不含今日</td><td>續強加碼</td></tr>
+          <tr><td>10 / 20 日低點</td><td>前 10 / 20 日 low 最小值，不含今日</td><td>出貨、結構破壞、高獲利保護</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. 股票分類</h2>
+      <p>TTT v2 會先用近 20 日漲停次數、平均日內振幅、20 日漲幅粗分股票類型。分類目前主要寫入進場原因，幫助復盤，不直接改變所有規則。</p>
+      <table>
+        <thead>
+          <tr><th>分類</th><th>判斷條件</th><th>策略含意</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A 類：一般波段股</td>
+            <td>未符合 B / C 類條件</td>
+            <td>一般右側趨勢，較依賴均線與結構突破。</td>
+          </tr>
+          <tr>
+            <td>B 類：強趨勢股</td>
+            <td>20 日報酬大於等於 18%，或近 20 日有 1 次類漲停，或平均日內振幅大於等於 4.5%</td>
+            <td>較偏主流強勢股，允許用續強確認加碼。</td>
+          </tr>
+          <tr>
+            <td>C 類：妖股 / 處置模式</td>
+            <td>近 20 日類漲停次數大於等於 2，或平均日內振幅大於等於 7.5%</td>
+            <td>高波動標的，量能可能失真，更重視漲停鎖住、開板回封、流動性斷層。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>4. 市場結構訊號</h2>
+      <table>
+        <thead>
+          <tr><th>訊號</th><th>目前程式判斷</th><th>解讀</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>類漲停</td><td><code>close >= previous_close * 1.095</code></td><td>接近台股漲停，視為高強度推升。</td></tr>
+          <tr><td>類跌停</td><td><code>close <= previous_close * 0.905</code></td><td>接近跌停，流動性風險上升。</td></tr>
+          <tr><td>漲停鎖住</td><td>類漲停且收盤位置大於等於 0.85</td><td>強勢，代表收在當日高檔。</td></tr>
+          <tr><td>開板回封</td><td>類漲停、盤中曾打開，但收盤位置仍大於等於 0.85</td><td>強勢承接，視為續強加碼條件之一。</td></tr>
+          <tr><td>弱收</td><td>收盤位置小於等於 0.30</td><td>突破後收低，可能是假突破或分歧。</td></tr>
+          <tr><td>強收</td><td>收盤位置大於等於 0.55</td><td>收在中上位置，代表買盤仍有承接。</td></tr>
+          <tr><td>長上影</td><td><code>(high - close) / close >= 8%</code></td><td>進場濾網，避免追在分歧高點。</td></tr>
+          <tr><td>急跌縮量洗盤</td><td>下跌、量比小於等於 0.85、仍在 MA20 上方</td><td>持有中不一定賣，可能只是洗盤。</td></tr>
+          <tr><td>爆量弱收</td><td>量比大於等於 2.2 且弱收</td><td>危險訊號，若跌破結構低點則視為真正出貨。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. 初始進場規則</h2>
+      <p>只有空手時才會檢查初始進場。訊號在今日成立後，實際買進會排到隔日開盤。</p>
+      <pre><code>if no_position
+and idx >= 65
+and idx < len(bars) - 1
+and MA5 > MA10 > MA20
+and close > previous_20d_high
+and not weak_close
+and upper_shadow_pct < 8%
+and not fail_limit
+and turnover >= 100,000,000:
+    next_day_open buy 30% of allowed position cash</code></pre>
+      <h3>進場條件說明</h3>
+      <ul>
+        <li><code>MA5 > MA10 > MA20</code>：短均線形成右側多頭排列。</li>
+        <li><code>close > previous_20d_high</code>：收盤突破近 20 日結構高點。</li>
+        <li>不能弱收：避免突破後收在低檔。</li>
+        <li>上影線不能過長：避免追在分歧高點。</li>
+        <li>疑似漲停打開未回封不追。</li>
+        <li>日成交金額需大於等於 1 億元，避免流動性太差。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>6. 分段建倉與加碼規則</h2>
+      <p>TTT v2 不一次買滿，而是用分段建倉保留彈性。此處的 30% / 30% / 40% 是針對「單檔最大配置資金」內部的比例，不是總資產比例。</p>
+      <table>
+        <thead>
+          <tr><th>階段</th><th>部位</th><th>觸發條件</th><th>執行</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>初始突破</td>
+            <td>30%</td>
+            <td>符合初始進場條件</td>
+            <td>隔日開盤買進</td>
+          </tr>
+          <tr>
+            <td>確認續強</td>
+            <td>+30%</td>
+            <td>持有中且只完成第一階段；出現漲停鎖住 / 開板回封，或突破 10 日高點且強收</td>
+            <td>隔日開盤加碼</td>
+          </tr>
+          <tr>
+            <td>主升段確認</td>
+            <td>+40%</td>
+            <td>已完成第二階段；浮盈大於等於 20%，且未弱收</td>
+            <td>隔日開盤加碼</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note">注意：如果已經持有，新的突破訊號不會建立第二筆交易，而是交由持倉管理、加碼、減碼與出場規則處理。</div>
+    </section>
+
+    <section>
+      <h2>7. 減碼與出場規則</h2>
+      <p>TTT v2 的核心不是「跌破 MA20 全砍」，而是分層處理。</p>
+      <table>
+        <thead>
+          <tr><th>層級</th><th>條件</th><th>動作</th><th>設計目的</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>第一層風控</td>
+            <td>收盤跌破 MA20，且尚未做過此層減碼，且不是急跌縮量洗盤</td>
+            <td>隔日開盤減碼 30%</td>
+            <td>先降低風險，不立刻離開核心倉位。</td>
+          </tr>
+          <tr>
+            <td>確認轉弱</td>
+            <td>連續 3 日收盤低於 MA20，且尚未做過此層減碼</td>
+            <td>隔日開盤再減碼 40%</td>
+            <td>跌破後站不回，代表趨勢轉弱機率升高。</td>
+          </tr>
+          <tr>
+            <td>趨勢結構破壞</td>
+            <td>連續 5 日低於 MA20，且收盤跌破 20 日低點</td>
+            <td>隔日開盤出清</td>
+            <td>長時間失守且結構低點破壞。</td>
+          </tr>
+          <tr>
+            <td>真正出貨</td>
+            <td>爆量、弱收、跌破 10 日低點，或爆量跌破 MA20 且跌破 20 日低點</td>
+            <td>隔日開盤出清</td>
+            <td>辨識高風險派發或結構性賣壓。</td>
+          </tr>
+          <tr>
+            <td>流動性崩潰</td>
+            <td>類跌停且收盤位置小於等於 0.20</td>
+            <td>隔日開盤出清</td>
+            <td>處理跌停鎖死、流動性斷層風險。</td>
+          </tr>
+          <tr>
+            <td>高獲利分歧</td>
+            <td>浮盈大於等於 60%，且跌破 MA10，且尚未做過高獲利減碼</td>
+            <td>隔日開盤減碼 40%</td>
+            <td>保護大波段獲利，但保留核心倉位續抱。</td>
+          </tr>
+          <tr>
+            <td>高獲利保護</td>
+            <td>浮盈大於等於 100%，且收盤跌破 <code>max(MA10, 前 10 日低點)</code></td>
+            <td>隔日開盤出清</td>
+            <td>避免超大獲利大幅回吐。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>8. 成交與回測邏輯</h2>
+      <ul>
+        <li>進場、加碼、減碼、出清都用 <code>pending_action</code> 排到下一個交易日開盤執行。</li>
+        <li>若訊號發生在資料最後一天，無法等隔日開盤，出場會用最後收盤估算。</li>
+        <li>持倉期間每日更新 equity curve：<code>cash + shares * close</code>。</li>
+        <li>最大回撤用 equity curve 逐日計算，不是用單筆交易報酬估算。</li>
+        <li>總報酬由 <code>_result()</code> 用最後權益 / 起始權益計算。</li>
+        <li>買進持有報酬為 <code>last_close / first_close - 1</code>。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>9. UI「是否適合進場」判斷</h2>
+      <p>單股查詢、掃描、圖片分析都共用 <code>_ttt_latest_decision()</code> 來避免結論不一致。這個判斷是針對「最新一根 K 線現在好不好買」的快照，不完全等同歷史回測是否曾經進場。</p>
+      <h3>適合進場</h3>
+      <pre><code>entry_ready =
+    MA5 > MA10 > MA20
+    and close > previous_20d_high
+    and not weak_close
+    and upper_shadow_pct < 8%
+    and not fail_limit
+    and turnover >= 100,000,000</code></pre>
+      <h3>不適合進場原因</h3>
+      <ul>
+        <li>MA5 / MA10 / MA20 尚未形成右側多頭排列。</li>
+        <li>尚未突破近 20 日結構高點。</li>
+        <li>收盤位置偏弱，可能是假突破或分歧。</li>
+        <li>上影線偏長，追價風險較高。</li>
+        <li>疑似漲停打開後未回封。</li>
+        <li>成交金額未達 1 億元。</li>
+      </ul>
+      <h3>價格結構顯示</h3>
+      <p>UI 會用「漲停鎖住、開板回封、價漲且收盤強、急跌縮量可能洗盤、爆量弱收警示、流動性/派發警示、一般結構」描述最新狀態。</p>
+    </section>
+
+    <section>
+      <h2>10. UI「加碼時機」判斷</h2>
+      <p>加碼判斷只在「策略目前仍持有」時有意義。若回測最後已經沒有未平倉，UI 會顯示不建議加碼。</p>
+      <pre><code>add_ready =
+    is_open
+    and (limit_locked or opened_relocked or close > previous_10d_high and strong_close)
+    and MA5 > MA10 > MA20
+    and not distribution
+    and turnover >= 100,000,000</code></pre>
+      <table>
+        <thead>
+          <tr><th>狀態</th><th>條件</th><th>意思</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="good">可加碼觀察</td><td>持有中且出現鎖漲停、開板回封或突破 10 日高點，且結構完整</td><td>可考慮用小部位順勢加碼。</td></tr>
+          <tr><td class="warn">等待加碼</td><td>持有中，但尚未出現更強確認</td><td>先續抱，等下一次確認。</td></tr>
+          <tr><td class="bad">不建議加碼</td><td>非持有狀態，或爆量弱收，或離 MA20 過遠且沒有鎖漲停/回封結構</td><td>避免追高或在風險變大時加碼。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>11. TTT 掃描功能</h2>
+      <ul>
+        <li>掃描台股前 N 大，N 可在 UI 設定，預設 1000。</li>
+        <li>股票池來源優先使用本地快取；若沒有快取才嘗試外部清單。</li>
+        <li>掃描結果會每日快取，key 包含日期、策略版本、limit、年數與量比門檻。</li>
+        <li>逐檔回測後只列出 <code>entry_ready == True</code> 的標的。</li>
+        <li>掃描採並行資料抓取，提高速度。</li>
+      </ul>
+      <h3>排序規則</h3>
+      <ol>
+        <li>加碼狀態為「可加碼觀察」者優先。</li>
+        <li>20 日量比越高越前面。</li>
+        <li>20MA 乖離越低越前面。</li>
+        <li>股號排序。</li>
+      </ol>
+      <h3>篩選</h3>
+      <p>掃描結果可依加碼狀態篩選，並可設定 20 日最低量比。量比預設為 1.2。</p>
+    </section>
+
+    <section>
+      <h2>12. 圖片分析功能</h2>
+      <p>圖片分析流程是：使用 LLM 從截圖辨識股號，之後每一檔都走與單股查詢、掃描相同的 TTT 回測與 <code>_ttt_latest_decision()</code> 判斷。</p>
+      <ul>
+        <li>支援上傳圖片與貼上剪貼簿圖片。</li>
+        <li>支援多張圖片。</li>
+        <li>圖片組與辨識出的股號會保存在本地紀錄。</li>
+        <li>LLM 只負責從圖片抽股號，不負責替代策略判斷。</li>
+        <li>實際策略結論仍由 TTT 程式邏輯產生。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>13. 圖表與互動</h2>
+      <ul>
+        <li>TTT 圖表顯示收盤價、20MA、買賣點。</li>
+        <li>滑鼠移到圖表會顯示日期、收盤價、20MA，以及當日買賣訊號。</li>
+        <li>可用滑鼠框選日期區間放大。</li>
+        <li>雙擊圖表可還原完整區間。</li>
+        <li>放大後 20MA 仍使用完整歷史資料計算，不會因為局部區間重算而失真。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>14. 目前限制與注意事項</h2>
+      <ul>
+        <li>「處置股」目前沒有即時官方處置名單串接，C 類妖股/處置模式是用漲停次數與波動特徵近似。</li>
+        <li>「漲停鎖住 / 開板回封」使用日 K 推估，無法看到真正盤中逐筆鎖單與開板細節。</li>
+        <li>回測使用日資料，所有訊號以收盤判斷，隔日開盤執行。</li>
+        <li>成交價格目前沒有額外計入手續費、證交稅或滑價。</li>
+        <li>流動性門檻目前固定為日成交金額 1 億元。</li>
+        <li>TTT v2 偏向抓主升段與保留核心倉位，因此短線勝率不一定最高。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>15. 快速規則總覽</h2>
+      <p>
+        <span class="tag">MA5 > MA10 > MA20</span>
+        <span class="tag">突破 20 日高點</span>
+        <span class="tag">不能弱收</span>
+        <span class="tag">上影線 &lt; 8%</span>
+        <span class="tag">成交金額 >= 1 億</span>
+        <span class="tag">30% / 30% / 40% 分段建倉</span>
+        <span class="tag">跌破 MA20 先減碼</span>
+        <span class="tag">3 日站不回再減碼</span>
+        <span class="tag">真正出貨才出清</span>
+        <span class="tag">+100% 用 MA10 / 10 日低點保護</span>
+      </p>
+      <p class="muted">文件產生日期：2026-05-13。依據目前本機程式碼整理。</p>
+    </section>
+  </main>
+</body>
+</html>
